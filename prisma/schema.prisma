@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+enum Status{
+   TODO
+   IN_PROGRESS
+   DONE
+  
+}
+
+model Board {
+  id        Int      @id @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+
+  tasks     Task[]
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+
+  tasks Task[]
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  status      Status   @default(TODO)
+
+  boardId     Int
+  userId      Int
+
+  createdAt   DateTime @default(now())
+
+  board       Board @relation(fields: [boardId], references: [id])
+  user        User  @relation(fields: [userId], references: [id])
+}
