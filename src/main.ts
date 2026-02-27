@@ -1,6 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder } from '@nestjs/swagger';
+import { Task } from './task/entities/task.entity';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +17,18 @@ async function bootstrap() {
     }),
   );
 
+const config = new DocumentBuilder()
+.setTitle('Task Management API')
+.setDescription('API для работы с досками, задачами и пользователями')
+.setVersion('1.0')
+.addTag('Boards', 'Эндпоинты для работы с досками')
+.addTag('Tasks', 'Эндпоинты для работы с задачами')
+.addTag('Users', 'Эндпоинты для работы с пользователями')
+.build();
+  
+    const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(3000);
-  console.log('Server started on http://localhost:3000');
 }
 bootstrap();

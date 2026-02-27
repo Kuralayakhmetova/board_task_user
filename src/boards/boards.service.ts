@@ -24,7 +24,18 @@ export class BoardsService {
 
   }
 
-
+async findByBoardId(id: number) {
+  return this.prismaService.board.findUnique({
+    where: { id },
+    include: {
+      tasks: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  });
+}
 
   async remove(id: number) {
     return await this.prismaService.board.delete({

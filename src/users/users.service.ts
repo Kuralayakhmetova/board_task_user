@@ -17,13 +17,19 @@ export class UsersService {
     return await this.prismaService.user.findMany();
   }
 
-  async findOne(id: number) {
-    return await this.prismaService.user.findUnique({
-      where: { id },
-    });
-  }
 
 
+
+async findByUserId(id: number) {
+  return await this.prismaService.user.findUnique({
+    where: { id },
+    include: {
+      tasks: {
+        include: { board: true }, // чтобы задачи сразу содержали доску
+      },
+    },
+  });
+}
 
   async remove(id: number) {
     return await this.prismaService.user.delete({
