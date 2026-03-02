@@ -679,7 +679,10 @@ export type BoardScalarFieldEnum = (typeof BoardScalarFieldEnum)[keyof typeof Bo
 export const UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  email: 'email'
+  email: 'email',
+  password: 'password',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
