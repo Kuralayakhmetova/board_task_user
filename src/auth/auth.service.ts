@@ -59,9 +59,34 @@ export class AuthService {
 
        return this.auth(res, user.id.toString());
     }
+async login(res: Response, dto: LoginRequest) {
+  const user = await this.prisma.user.findUnique({
+    where: { email: dto.email },
+  });
 
+  if (!user) {
+    throw new UnauthorizedException();
+  }
 
-    async login(res:Response,   dto:LoginRequest){
+  const isValid = await verify(user.password, dto.password);
+
+  if (!isValid) {
+    throw new UnauthorizedException();
+  }
+
+  const payload = { id: user.id };
+
+  const accessToken = this.jwtService.sign(payload);
+
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+  });
+
+  return { accessToken };
+}
+   /* async login(res:Response,   dto:LoginRequest){
         const {email, password} = dto;
 
         const user = await this.prisma.user.findUnique({
@@ -81,7 +106,7 @@ export class AuthService {
         return this.auth(res, user.id.toString());
     }
 
-
+*/
  private auth(res: Response, id: string) {
    const { accessToken, refreshToken } = this.generateTokens(id);
    this.setCookie(res, refreshToken, new Date(60 * 60 * 24* 1000 + Date.now()));
@@ -93,6 +118,17 @@ export class AuthService {
   return { message: 'Вы успешно вышли из системы' };
  }
  
+ async validateUser(id: number) {
+   const user = await this.prisma.user.findUnique({
+     where: { id },
+     select: { id: true },
+   });
+   if (!user) {
+     throw new NotFoundException('Пользователь не найден');
+   }
+   return user;
+ }
+
 async refresh(req: Request, res: Response) {
    const refreshToken = req.cookies['refreshToken'];
 
