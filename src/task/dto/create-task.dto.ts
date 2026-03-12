@@ -22,7 +22,5 @@ export class CreateTaskDto {
   @ApiProperty({ description: 'ID доски, к которой относится задача', example: 1 })
     @IsInt()
   boardId: number;
-  @ApiProperty({ description: 'ID пользователя, которому назначена задача', example: 1 }) 
-  @IsInt()
-  userId: number;
+
 }

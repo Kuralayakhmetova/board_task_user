@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -37,6 +37,21 @@ async findByBoardId(id: number) {
   });
 }
 
+
+async update(id: number, updateBoardDto: UpdateBoardDto) {
+  const board = await this.prismaService.board.findUnique({
+    where: { id },
+  });
+
+  if (!board) {
+    throw new NotFoundException('Доска не найдена');
+  }
+
+  return this.prismaService.board.update({
+    where: { id },
+    data: updateBoardDto,
+  });
+}
   async remove(id: number) {
     return await this.prismaService.board.delete({
       where: { id }

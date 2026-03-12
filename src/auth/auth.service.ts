@@ -121,7 +121,7 @@ async login(res: Response, dto: LoginRequest) {
  async validateUser(id: number) {
    const user = await this.prisma.user.findUnique({
      where: { id },
-     select: { id: true },
+     select: { id: true,role:true },
    });
    if (!user) {
      throw new NotFoundException('Пользователь не найден');

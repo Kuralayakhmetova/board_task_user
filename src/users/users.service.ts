@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,6 +12,36 @@ export class UsersService {
       data: dto
     });
   }
+
+  async getProfileWithTasks(userId: number) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        tasks: true, // include задачи
+      },
+    });
+
+    if (!user) throw new NotFoundException('Пользователь не найден');
+
+    return user;
+  }
+
+  async getCurrentUser(userId: number) {
+  return this.prismaService.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      tasks: true, // список задач пользователя
+    },
+  });
+}
 
   async findAll() {
     return await this.prismaService.user.findMany();
