@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -39,15 +39,18 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Пользователь успешно получен.' })
   @ApiResponse({ status: 404, description: 'Пользователь не найден.' })
   @Get(':id')
-  findByUserId(@Param('id') id: string) {
-    return this.usersService.findByUserId(Number(id));
+  findByUserId(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findByUserId(id);
   }
 
   @ApiOperation({ summary: 'Удалить пользователя по ID' })
   @ApiResponse({ status: 200, description: 'Пользователь успешно удалён.' })
   @ApiResponse({ status: 404, description: 'Пользователь не найден.' })
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.usersService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Authorized() currentUser, // текущий пользователь из JWT
+  ) {
+    return this.usersService.remove(id, currentUser);
   }
 }

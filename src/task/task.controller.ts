@@ -3,9 +3,10 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Status } from 'src/generated/prisma/browser';
+//import { Status } from 'src/generated/prisma/browser';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { Role } from 'src/auth/enums/role.enum';
+import { Status } from 'src/auth/enums/status.enum'; // импортируем новый enum
 
 @ApiTags('Tasks')
 @Controller('task')

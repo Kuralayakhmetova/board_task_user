@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterRequest } from './dto/register.dto';
 import { hash, verify } from 'argon2';
@@ -46,7 +46,7 @@ export class AuthService {
         });
 
         if(existingUser){
-            throw new Error('Пользователь с таким email уже существует');
+            throw new ConflictException('Пользователь с таким email уже существует');
         }
 
         const user = await this.prisma.user.create({
@@ -84,7 +84,8 @@ async login(res: Response, dto: LoginRequest) {
     sameSite: 'strict',
   });
 
-  return { accessToken };
+  return this.auth(res, user.id.toString());
+
 }
    /* async login(res:Response,   dto:LoginRequest){
         const {email, password} = dto;

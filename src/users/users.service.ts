@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -44,7 +44,7 @@ export class UsersService {
 }
 
   async findAll() {
-    return await this.prismaService.user.findMany();
+    return this.prismaService.user.findMany();
   }
 
 
@@ -61,9 +61,10 @@ async findByUserId(id: number) {
   });
 }
 
-  async remove(id: number) {
-    return await this.prismaService.user.delete({
-      where: { id },
-    });
+async remove(id: number, currentUser) {
+  if (currentUser.role !== 'ADMIN') {
+    throw new ForbiddenException('Доступ запрещен');
   }
+  return await this.prismaService.user.delete({ where: { id } });
+}
 }
