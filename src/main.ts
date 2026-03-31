@@ -12,6 +12,11 @@ async function bootstrap() {
 
 app.use(cookieParser());
 
+ app.enableCors({
+   origin: 'http://localhost:3001', // адрес Next.js
+   credentials: true, // ОБЯЗАТЕЛЬНО — иначе cookies не работают
+ });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
